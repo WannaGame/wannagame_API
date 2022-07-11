@@ -8,7 +8,7 @@ declare global {
   };
 
   interface UserDTO {
-    discordId: number;
+    discordId: string;
     username: string;
     avatar: string;
   }

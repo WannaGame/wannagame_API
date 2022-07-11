@@ -1,29 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/user.entity';
 import { DataSource } from 'typeorm';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { AuthModule } from './api/auth/auth.module';
+import { GamerzModule } from './api/gamerz/gamerz.module';
+import { ConfigModule } from '@nestjs/config';
+import { getEnvPath } from './common/helpers/env.helper';
+import { TypeOrmConfigService } from './database/database.service';
 
-/*
-J'aime pas avoir la config de l'ORM direct dans le module principal, à voir si y'a pas moyen de faire soit un
-fichier orm.confid, soit carrément un module (config async Hashicorp Vault ?)
- */
+const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'vault.brunomarty.dev',
-      port: 5432,
-      username: 'v-token-wannapla-aWtEvtefBeKFCtevOok9-1657057648',
-      password: '9JSPJHiSIhHHO6h-3eKN',
-      database: 'wannaplay',
-      entities: [User],
-      synchronize: true,
-    }),
+    ConfigModule.forRoot({ envFilePath, isGlobal: true }),
+    TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     AuthModule,
-    UsersModule,
+    GamerzModule,
   ],
 })
 export class AppModule {

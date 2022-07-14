@@ -1,17 +1,15 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-discord';
-import { stringify } from 'querystring';
-import { AuthService } from '../auth.service';
-import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { AuthenticationProvider } from '../services/auth';
 
 @Injectable()
 export class DiscordStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private authservice: AuthService,
-    private http: HttpService,
     private readonly config: ConfigService,
+    @Inject('AUTH_SERVICE')
+    private readonly authService: AuthenticationProvider,
   ) {
     super({
       clientID: config.get<string>('CLIENT_ID'),
@@ -23,11 +21,22 @@ export class DiscordStrategy extends PassportStrategy(Strategy) {
   private readonly logger = new Logger(DiscordStrategy.name);
 
   async validate(
-    accesToken: string,
+    accessToken: string,
     refreshToken: string,
     profile: Profile,
   ): Promise<any> {
-    const { username, discriminator, id, avatar } = profile;
-    this.logger.log(username, discriminator, id, avatar);
+    const { username, discriminator, id: discordId, avatar } = profile;
+    const details = {
+      username,
+      discriminator,
+      discordId,
+      avatar,
+      accessToken,
+      refreshToken,
+    };
+    this.logger.log(
+      `Was asked to validate a gamer from Discord with discord_id : ${discordId}`,
+    );
+    return await this.authService.validateGamer(details);
   }
 }

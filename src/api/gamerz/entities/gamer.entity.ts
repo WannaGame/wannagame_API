@@ -1,12 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'gamerz', schema: 'public' })
 export class Gamer {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Index({ unique: true })
-  @Column({ name: 'discord_id' })
+  @Column({ name: 'discord_id', unique: true })
   discordId: string;
 
   @Column()
@@ -17,4 +16,10 @@ export class Gamer {
 
   @Column({ nullable: true })
   avatar: string;
+
+  @Column({ name: 'access_token' })
+  accessToken: string;
+
+  @Column({ name: 'refresh_token' })
+  refreshToken: string;
 }

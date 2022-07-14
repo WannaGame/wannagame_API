@@ -1,6 +1,6 @@
 import { Controller, Get, Logger, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { DiscordAuthGuard } from './guards';
+import { AuthenticatedGuard, DiscordAuthGuard } from '../guards';
 
 @Controller('auth')
 export class AuthController {
@@ -20,8 +20,9 @@ export class AuthController {
    * URL de redirection sur laquelle le Provider OAuth2 va rediriger
    */
   @Get('redirect')
+  @UseGuards(DiscordAuthGuard)
   redirect(@Res() res: Response) {
-    res.send(200);
+    res.redirect('http://localhost:3000/');
   }
 
   /**
@@ -29,6 +30,7 @@ export class AuthController {
    * permet de récupérer le status de l'authentification
    */
   @Get('status')
+  @UseGuards(AuthenticatedGuard)
   status(@Req() req: Request) {
     return req.user;
   }
@@ -38,7 +40,8 @@ export class AuthController {
    * y'a vraiment besoin d'expliquer là ?
    */
   @Get('logout')
+  @UseGuards(AuthenticatedGuard)
   logout(@Req() req: Request) {
-    return;
+    req.logOut(() => this.logger.log(`logging out ${req.user}`));
   }
 }

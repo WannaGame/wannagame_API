@@ -1,15 +1,12 @@
-export {};
+import { Gamer } from '../../api/gamerz/entities/gamer.entity';
 
-declare global {
-  type DiscordUserData = {
-    id: string;
-    username: string;
-    avatar: string;
-  };
+export type GamerDetails = {
+  username: string;
+  discriminator: string;
+  discordId: string;
+  avatar: string;
+  accessToken: string;
+  refreshToken: string;
+};
 
-  interface UserDTO {
-    discordId: string;
-    username: string;
-    avatar: string;
-  }
-}
+export type Done = (err: Error, user: Gamer) => void;

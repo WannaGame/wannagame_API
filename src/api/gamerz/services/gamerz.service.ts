@@ -24,9 +24,9 @@ export class GamerzService {
   }
 
   update(
-    crieteria: { discordId: string },
+    criteria: { discordId: string },
     entityToUpdate: GamerDetails,
   ): Promise<UpdateResult> {
-    return this.gamerzRepository.update(crieteria, entityToUpdate);
+    return this.gamerzRepository.update(criteria, entityToUpdate);
   }
 }
